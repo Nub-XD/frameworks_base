@@ -16,6 +16,8 @@
 
 package com.android.systemui.statusbar.policy;
 
+import static android.provider.Settings.Secure.NETWORK_TRAFFIC;
+
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -37,6 +39,7 @@ import android.text.format.DateFormat;
 import android.text.style.CharacterStyle;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
+import android.util.ArraySet;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.View;
@@ -87,6 +90,7 @@ public class Clock extends TextView implements
 
     private boolean mClockVisibleByPolicy = true;
     private boolean mClockVisibleByUser = getVisibility() == View.VISIBLE;
+    private boolean mNetworkTrafficEnabled;
 
     private boolean mAttached;
     private boolean mScreenReceiverRegistered;
@@ -195,7 +199,8 @@ public class Clock extends TextView implements
             // The receiver will return immediately if the view does not have a Handler yet.
             mBroadcastDispatcher.registerReceiverWithHandler(mIntentReceiver, filter,
                     Dependency.get(Dependency.TIME_TICK_HANDLER), UserHandle.ALL);
-            Dependency.get(TunerService.class).addTunable(this, CLOCK_SECONDS, CLOCK_STYLE);
+            Dependency.get(TunerService.class).addTunable(this, CLOCK_SECONDS, CLOCK_STYLE,
+                    NETWORK_TRAFFIC);
             mCommandQueue.addCallback(this);
             mCurrentUserTracker.startTracking();
             mCurrentUserId = mCurrentUserTracker.getCurrentUserId();
@@ -322,6 +327,11 @@ public class Clock extends TextView implements
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        if (mNetworkTrafficEnabled) {
+            // Maintain consistent padding for network traffic
+            return;
+        }
+
         int chars = getText().length();
         if (chars != mCharsAtCurrentWidth) {
             mCharsAtCurrentWidth = chars;
@@ -347,6 +357,9 @@ public class Clock extends TextView implements
             // Force refresh of dependent variables.
             mContentDescriptionFormatString = "";
             mDateTimePatternGenerator = null;
+            updateClock(true);
+        } else if (NETWORK_TRAFFIC.equals(key)) {
+            mNetworkTrafficEnabled = TunerService.parseIntegerSwitch(newValue, false);
             updateClock(true);
         }
     }
