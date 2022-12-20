@@ -28,4 +28,9 @@
     <!-- Screen record stop dot -->
     <dimen name="screenrecord_dot_size">48dp</dimen>
 
+    <!-- Mobile data type icon -->
+    <dimen name="mobile_type_icon_margin_vertical">1.5dp</dimen>
+    <dimen name="mobile_type_icon_height">12dp</dimen>
+    <dimen name="mobile_type_icon_height_with_activity">8dp</dimen>
+
 </resources>

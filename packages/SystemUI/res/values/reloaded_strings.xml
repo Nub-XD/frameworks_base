@@ -75,4 +75,7 @@
     <!-- Volume panel QS tile -->
     <string name="quick_settings_volume_panel_label">Volume panel</string>
 
+    <!-- Network activity indicators on statusbar -->
+    <string name="status_bar_network_activity">Network activity indicators</string>
+
 </resources>
