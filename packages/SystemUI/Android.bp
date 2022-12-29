@@ -123,7 +123,6 @@ android_library {
         "jsr330",
         "lottie",
         "bcsmartspace-google",
-        "faceunlock_framework",
     ],
     manifest: "AndroidManifest.xml",
     defaults: [
